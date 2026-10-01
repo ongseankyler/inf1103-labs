@@ -19,6 +19,12 @@ def load_inventory():
         return 0, []
 
 
+def save_inventory(total_inventory, history):
+    with open(inventory.txt, "w") as inventory:
+        inventory.write(f"{total_inventory}\n")
+        inventory.write(",". join(str(amount) for amount in history) + "\n")
+
+
 
 def get_valid_input():
     
@@ -65,7 +71,7 @@ def generate_report(total_units, failed_attempts):
 def main():
     global rejected_entries
 
-    inventory = 0
+    inventory, history = load_inventory()
     total_tax = 0
     deliveries_processed = 0
 
@@ -87,6 +93,9 @@ def main():
         if inventory > 500:
             print("Overstock! Inventory exceeds 500 units")
             break
+
+    save_inventory(inventory, history)
+
 
     generate_report(deliveries_processed, rejected_entries)
     print(f"Total tax accumulated: {total_tax:.2f}")
