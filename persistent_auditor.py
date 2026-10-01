@@ -1,9 +1,11 @@
+INVENTORY = "inventory.txt"
+
 rejected_entries = 0 
 
 def load_inventory():
 
     try: 
-        with open(inventory.txt, "r") as inventory:
+        with open(INVENTORY, "r") as inventory:
             lines = inventory.read().splitlines()
     except FileNotFoundError:
         return 0, []
@@ -20,7 +22,7 @@ def load_inventory():
 
 
 def save_inventory(total_inventory, history):
-    with open(inventory.txt, "w") as inventory:
+    with open(INVENTORY, "w") as inventory:
         inventory.write(f"{total_inventory}\n")
         inventory.write(",". join(str(amount) for amount in history) + "\n")
 
@@ -75,6 +77,7 @@ def main():
     total_tax = 0
     deliveries_processed = 0
 
+    print(f"Loaded inventory: {inventory} units ({len(history)} previous transactions)")
     print("Enter stock quantity or type 'quit' to finish")
 
     while True:
@@ -84,6 +87,7 @@ def main():
             break
 
         inventory = process_delivery(inventory, result)
+        history.append(result)
         tax = calculate_tax(result)
         total_tax += tax
         deliveries_processed += 1
@@ -96,10 +100,11 @@ def main():
 
     save_inventory(inventory, history)
 
-
     generate_report(deliveries_processed, rejected_entries)
     print(f"Total tax accumulated: {total_tax:.2f}")
     print(f"Total Inventory: {inventory}")
+    print(f"Transaction history: {history}")
+    print(f"Inventory successfully saved to {INVENTORY}")
 
 
 main()
